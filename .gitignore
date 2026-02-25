@@ -1,0 +1,5 @@
+# CMake build output
+out/
+
+# Visual Studio local settings
+.vs/
