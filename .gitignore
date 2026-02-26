@@ -6,3 +6,7 @@ out/
 
 # Debug captured frames
 debug_frames/
+
+# Server – received images & Python cache
+server/received_images/
+__pycache__/
