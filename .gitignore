@@ -3,3 +3,6 @@ out/
 
 # Visual Studio local settings
 .vs/
+
+# Debug captured frames
+debug_frames/

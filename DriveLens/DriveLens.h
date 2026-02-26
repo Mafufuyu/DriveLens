@@ -4,7 +4,12 @@
 #pragma once
 
 #include <iostream>
+#include <string>
+#include <vector>
+#include <chrono>
+#include <thread>
+#include <stdexcept>
+#include <filesystem>
+
 #include <opencv2/opencv.hpp>
 #include <cpr/cpr.h>
-
-// TODO: Reference additional headers your program requires here.
