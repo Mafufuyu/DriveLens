@@ -16,7 +16,7 @@ using json = nlohmann::json;
 #define DEBUG_SAVE_FRAMES
 
 // ── Configuration ────────────────────────────────────────────────────
-constexpr const char* API_ENDPOINT         = "http://localhost:8000/upload";
+constexpr const char* API_ENDPOINT = "http://localhost:8000/upload"; // Change to your server URL
 constexpr int         CAPTURE_INTERVAL_SEC = 2;
 constexpr int         RESIZE_WIDTH         = 640;
 constexpr int         RESIZE_HEIGHT        = 480;

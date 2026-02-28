@@ -1,0 +1,14 @@
+services:
+  drivelens-server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: drivelens-server
+    ports:
+      - "8000:8000"          # C++ app on host connects to localhost:8000
+    volumes:
+      - ./server/received_images:/app/received_images   # persist received frames
+      - ./server/drivelens.db:/app/drivelens.db         # persist SQLite database
+    environment:
+      - PYTHONUNBUFFERED=1   # print logs immediately (no buffering)
+    restart: unless-stopped
