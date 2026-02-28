@@ -10,3 +10,9 @@ debug_frames/
 # Server – received images & Python cache
 server/received_images/
 __pycache__/
+
+# SQLite database
+*.db
+
+# YOLO model weights (auto-downloaded at runtime)
+*.pt

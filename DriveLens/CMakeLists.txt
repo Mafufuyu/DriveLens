@@ -13,4 +13,7 @@ target_include_directories(DriveLens PRIVATE ${OpenCV_INCLUDE_DIRS})
 # cpr     – modern C++ HTTP client (wraps libcurl) for cloud upload
 target_link_libraries(DriveLens PRIVATE cpr::cpr)
 
+# nlohmann/json – parse server JSON responses
+target_link_libraries(DriveLens PRIVATE nlohmann_json::nlohmann_json)
+
 

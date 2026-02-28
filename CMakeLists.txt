@@ -24,6 +24,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # ── Find third-party packages (installed via vcpkg) ──────────────────
 find_package(OpenCV REQUIRED)
 find_package(cpr REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 # Include sub-projects.
 add_subdirectory ("DriveLens")
