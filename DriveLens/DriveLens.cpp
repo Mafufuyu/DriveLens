@@ -89,9 +89,8 @@ static void drawDetections(cv::Mat& frame,
 		cv::rectangle(frame, cv::Point(x1, y1), cv::Point(x2, y2),
 					  cv::Scalar(0, 255, 0), 2);
 
-		// Label: "car 87%"
-		std::string label = det.name + " "
-			+ std::to_string(static_cast<int>(det.confidence * 100)) + "%";
+		// Label: object name only
+		std::string label = det.name;
 
 		int baseline = 0;
 		cv::Size textSize = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX,
@@ -190,6 +189,10 @@ int main(int argc, char* argv[])
 		// Last detection results – drawn on every frame until updated
 		CloudResult lastDetection;
 
+		// Async upload state – keeps video playing during HTTP POST
+		std::future<std::string> pendingUpload;
+		bool uploadInFlight = false;
+
 		while (true) {
 			if (!cap.read(frame) || frame.empty()) {
 				if (isVideoFile)
@@ -197,6 +200,21 @@ int main(int argc, char* argv[])
 				else
 					std::cerr << "[Error] Failed to read frame." << std::endl;
 				break;
+			}
+
+			// Check if a background upload has finished (non-blocking)
+			if (uploadInFlight &&
+				pendingUpload.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready)
+			{
+				std::string cloudResponse = pendingUpload.get();
+				uploadInFlight = false;
+
+				lastDetection = parseCloudResponse(cloudResponse);
+
+				if (!lastDetection.objects.empty()) {
+					std::cout << "[Detect] " << lastDetection.objects.size()
+							  << " object(s) found" << std::endl;
+				}
 			}
 
 			// Draw detections on a COPY – keep original frame clean for upload
@@ -211,6 +229,9 @@ int main(int argc, char* argv[])
 			++frameCount;
 			if (frameCount % frameSkip != 0) continue;
 
+			// Skip this capture if a previous upload is still in progress
+			if (uploadInFlight) continue;
+
 			// --- Resize the CLEAN frame for upload ---
 			cv::resize(frame, resized, cv::Size(RESIZE_WIDTH, RESIZE_HEIGHT));
 
@@ -221,24 +242,24 @@ int main(int argc, char* argv[])
 				continue;
 			}
 
-			// --- Upload to server for AI detection ---
 			std::string filename = "frame_" + std::to_string(captureIndex) + ".jpg";
 
 #ifdef DEBUG_SAVE_FRAMES
 			debugSave(resized, filename);
 #endif
 
-			std::string cloudResponse = uploadFrame(jpegBuffer, filename);
-
-			// --- Parse response and update overlay ---
-			lastDetection = parseCloudResponse(cloudResponse);
-
-			if (!lastDetection.objects.empty()) {
-				std::cout << "[Detect] " << lastDetection.objects.size()
-						  << " object(s) found" << std::endl;
-			}
+			// --- Launch upload in background thread ---
+			std::vector<uchar> bufferCopy = jpegBuffer;
+			pendingUpload = std::async(std::launch::async,
+				uploadFrame, std::move(bufferCopy), filename);
+			uploadInFlight = true;
 
 			++captureIndex;
+		}
+
+		// Wait for any pending upload before cleanup
+		if (uploadInFlight) {
+			pendingUpload.wait();
 		}
 
 		cap.release();

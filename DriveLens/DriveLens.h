@@ -12,6 +12,7 @@
 #include <vector>
 #include <stdexcept>
 #include <filesystem>
+#include <future>
 
 #include <opencv2/opencv.hpp>
 #include <cpr/cpr.h>
