@@ -22,7 +22,7 @@ _COCO_NAMES = {
     5:  "bus",
     7:  "truck",
     9:  "traffic light",
-    11: "sign",
+    11: "stop sign",
 }
 
 # ── Singleton model instance (loaded once, reused for every request) ──
