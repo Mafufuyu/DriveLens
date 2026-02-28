@@ -16,3 +16,6 @@ __pycache__/
 
 # YOLO model weights (auto-downloaded at runtime)
 *.pt
+
+# Docker
+server/received_images/
