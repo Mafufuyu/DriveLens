@@ -9,22 +9,9 @@
 //   DriveLens.exe video.mp4    -> read from a video file
 
 #include "DriveLens.h"
+#include "config.h"
 
 using json = nlohmann::json;
-
-// ── Debug switch ─────────────────────────────────────────────────────
-#define DEBUG_SAVE_FRAMES
-
-// ── Configuration ────────────────────────────────────────────────────
-constexpr const char* API_ENDPOINT = "http://localhost:8000/upload"; // Change to your server URL
-constexpr int         CAPTURE_INTERVAL_SEC = 2;
-constexpr int         RESIZE_WIDTH         = 640;
-constexpr int         RESIZE_HEIGHT        = 480;
-constexpr int         JPEG_QUALITY         = 80;
-
-#ifdef DEBUG_SAVE_FRAMES
-constexpr const char* DEBUG_OUTPUT_DIR = "debug_frames";
-#endif
 
 // ── Detection data parsed from the server JSON response ──────────────
 struct Detection {
@@ -134,7 +121,7 @@ static std::string uploadFrame(const std::vector<uchar>& jpegBuffer,
 		cpr::Multipart{
 			{ "file", cpr::Buffer{ body.begin(), body.end(), filename } }
 		},
-		cpr::Timeout{ 30000 }
+		cpr::Timeout{ UPLOAD_TIMEOUT_MS }
 	);
 
 	if (res.status_code == 200) {

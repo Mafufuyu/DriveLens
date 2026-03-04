@@ -3,7 +3,7 @@
 #
 
 # Add source to this project's executable.
-add_executable (DriveLens "DriveLens.cpp" "DriveLens.h")
+add_executable (DriveLens "DriveLens.cpp" "DriveLens.h" "config.h")
 
 # ── Link third-party libraries ───────────────────────────────────────
 # OpenCV  – image capture & processing on the edge device
